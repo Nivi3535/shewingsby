@@ -1,0 +1,67 @@
+[
+  {
+    "title": "Home",
+    "slug": "",
+    "href": "/"
+  },
+  {
+    "title": "Women",
+    "slug": "women",
+    "children": [
+      {
+        "title": "Saree",
+        "slug": "saree"
+      }
+    ]
+  },
+  {
+    "title": "Kids",
+    "slug": "kids",
+    "children": [
+      {
+        "title": "Boys",
+        "slug": "boys",
+        "children": [
+          {
+            "title": "Kurta",
+            "slug": "kurta"
+          },
+          {
+            "title": "Size Chart",
+            "slug": "size"
+          }
+        ]
+      },
+      {
+        "title": "Girls",
+        "slug": "girls",
+        "children": [
+          {
+            "title": "Cotton Frocks",
+            "slug": "cotton-frocks"
+          },
+          {
+            "title": "Pattu Pavadai",
+            "slug": "pattu-pavadai"
+          },
+          {
+            "title": "Pavadai Sattai",
+            "slug": "pavadai-sattai"
+          },
+          {
+            "title": "Size Chart",
+            "slug": "size"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "About Us",
+    "slug": "about"
+  },
+  {
+    "title": "Contact Us",
+    "slug": "contact"
+  }
+]

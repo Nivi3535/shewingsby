@@ -1,0 +1,26 @@
+[
+  {
+    "id": "girls",
+    "title": "Pattu Gown",
+    "image": "/images/pattu-gown.png",
+    "href": "/kids/girls/pattu-gown"
+  },
+  {
+    "id": "girls-pavadai",
+    "title": "Pavadai Sattai",
+    "image": "/images/pavadai.png",
+    "href": "/kids/girls/pavadai-sattai"
+  },
+  {
+    "id": "girls-cotton",
+    "title": "Cotton World",
+    "image": "/images/pavadai.png",
+    "href": "/kids/girls/cotton-frocks"
+  },
+  {
+    "id": "women",
+    "title": "Silk Saree",
+    "image": "/images/silk-saree.png",
+    "href": "/women"
+  }
+]
