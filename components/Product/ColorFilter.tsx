@@ -16,9 +16,9 @@ export default function ColorFilter() {
     <FilterSection title="Color">
       <div className="space-y-2">
         {colors.map((color) => (
-          <div>
+          <div key={color}>
             {" "}
-            <label key={color} className="flex items-center gap-2">
+            <label className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={selectedFiltersKey.includes(color) ?? false}

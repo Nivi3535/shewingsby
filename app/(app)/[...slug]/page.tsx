@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ProductFilter from "@/components/Product/ProductFilter";
 import ProductSection from "@/components/Product/ProductSection";
 import ProductDetail from "@/components/Product/ProductDetail";
+import FilterProvider from "@/components/Product/Filter/FilterContext";
 
 import {
   getCategoryBySlugPath,
@@ -126,19 +127,22 @@ export default async function SlugPage({
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
-      <div className="flex gap-8">
-        <aside className="w-72 shrink-0">
-          <ProductFilter />
-        </aside>
+      {/* filter state is scoped to this page, not the root layout */}
+      <FilterProvider>
+        <div className="flex gap-8">
+          <aside className="w-72 shrink-0">
+            <ProductFilter />
+          </aside>
 
-        <section className="flex-1">
-          <ProductSection
-            categoryName={category.name}
-            products={products}
-            count={count}
-          />
-        </section>
-      </div>
+          <section className="flex-1">
+            <ProductSection
+              categoryName={category.name}
+              products={products}
+              count={count}
+            />
+          </section>
+        </div>
+      </FilterProvider>
     </main>
   );
 }

@@ -1,4 +1,12 @@
-import { createContext, ReactNode, useState, useContext } from "react";
+"use client";
+import {
+  createContext,
+  ReactNode,
+  useState,
+  useContext,
+  useMemo,
+  useCallback,
+} from "react";
 
 interface FilterContextType {
   selectedFilters: Record<string, string[]>;
@@ -21,8 +29,13 @@ function FilterProvider({ children }: { children: ReactNode }) {
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
+  // memoized so consumers only re-render when selectedFilters actually changes
+  const value = useMemo(
+    () => ({ selectedFilters, setSelectedFilters }),
+    [selectedFilters],
+  );
   return (
-    <FilterContext.Provider value={{ selectedFilters, setSelectedFilters }}>
+    <FilterContext.Provider value={value}>
       {children}
     </FilterContext.Provider>
   );
@@ -35,17 +48,19 @@ export const useFilter = (filterKey: string) => {
   const { selectedFilters, setSelectedFilters } = context;
 
   const selectedFiltersKey = selectedFilters[filterKey] ?? [];
-  console.log("selectedFiltersKey", selectedFiltersKey, filterKey);
 
-  const selectedFilterValue = (Filtervalues: string) => {
-    setSelectedFilters((prev) => {
-      const current = prev[filterKey] ?? [];
-      const next = current.includes(Filtervalues)
-        ? current.filter((value) => value !== Filtervalues)
-        : [...current, Filtervalues];
-      return { ...prev, [filterKey]: next };
-    });
-  };
+  const selectedFilterValue = useCallback(
+    (Filtervalues: string) => {
+      setSelectedFilters((prev) => {
+        const current = prev[filterKey] ?? [];
+        const next = current.includes(Filtervalues)
+          ? current.filter((value) => value !== Filtervalues)
+          : [...current, Filtervalues];
+        return { ...prev, [filterKey]: next };
+      });
+    },
+    [filterKey, setSelectedFilters],
+  );
 
   return { selectedFilterValue, selectedFiltersKey };
 };

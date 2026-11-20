@@ -1,6 +1,6 @@
 "use client";
 import FilterSection from "./FilterSection";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFilter } from "./Filter/FilterContext";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { Category } from "@/types/categories";
@@ -12,12 +12,23 @@ type Categorymap = {
   children?: Category[];
 };
 
-export default function CategoryFilter() {
-  const context = useFilter("category");
-  if (!context) return null;
+function buildTree(
+  categories: Category[],
+  parentId: number | null = null,
+): Category[] {
+  return categories
+    .filter((category) => category.parentId === parentId)
+    .map((category) => ({
+      ...category,
+      children: buildTree(categories, category.id),
+    }));
+}
 
-  const { selectedFiltersKey, selectedFilterValue } = context;
-  const { categories, loadCategory } = useCategoryStore();
+export default function CategoryFilter() {
+  const { selectedFiltersKey, selectedFilterValue } = useFilter("category");
+  // select only what this component uses so loading/error changes don't re-render it
+  const categories = useCategoryStore((state) => state.categories);
+  const loadCategory = useCategoryStore((state) => state.loadCategory);
   //const selectedCategory = selectedFilters["category"] || [];
   const [openCategory, setOpenCategory] = useState(false);
 
@@ -30,21 +41,12 @@ export default function CategoryFilter() {
     setOpenCategory((prev) => !prev);
   };
 
-  function buildTree(
-    categories: Category[],
-    parentId: number | null = null,
-  ): Category[] {
-    return categories
-      .filter((category) => category.parentId === parentId)
-      .map((category) => ({
-        ...category,
-        children: buildTree(categories, category.id),
-      }));
-  }
+  // only rebuild the tree when the categories change, not on every checkbox click
+  const categoryTree = useMemo(() => buildTree(categories), [categories]);
 
   return (
     <FilterSection title="Category">
-      {buildTree(categories).map((category) => (
+      {categoryTree.map((category) => (
         <label key={category.id} className="flex items-center gap-2">
           <input
             key={category.id}
