@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { requestPasswordReset } from "../reset-password/actions";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,9 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+
+  //setting it to true for my test purpose
+  const [showReset, setShowReset] = useState(true);
 
   const [loading, setLoading] = useState(false);
 
@@ -37,9 +41,18 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        //console.log("Login error:", result.code, result.error);
-        router.push("/auth/signup");
-        toast.error("Invalid email or password");
+        if (result.code === "user_not_found") {
+          toast.error("No account with this email. Please sign up.");
+        } else if (result.code === "wrong_password") {
+          //show button to reset password and send reset link to email
+          //my logic is to set the errorstate and if the password errorstate is true show button to rest password
+          //when the user clicks on the button then send the reset (resend) link to the email and show a toast message that the reset link
+          //once the user clicks on the reset link then redirect to the reset password page and show a toast message that the password has been reset successfully
+          setShowReset(true);
+          toast.error("Wrong password. Please try again.");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
         return;
       }
 
@@ -53,6 +66,19 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleSendReset(): Promise<void> {
+    console.log("send reset link to email");
+    //how to get email
+    //how to get password , 1.password can be there / or not , send reset link to email if user exist
+    if (!form.email) {
+      toast.error("Enter your email first.");
+      return;
+    }
+    const result = await requestPasswordReset(form.email);
+    toast.success(result.message);
+    setShowReset(false);
   }
 
   return (
@@ -96,6 +122,11 @@ export default function LoginPage() {
           >
             {loading ? "Signing In..." : "Sign In"}
           </button>
+          {showReset && (
+            <button type="button" onClick={handleSendReset}>
+              Forgot password? Email me a reset link
+            </button>
+          )}
         </form>
       </div>
     </main>

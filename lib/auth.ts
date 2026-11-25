@@ -6,6 +6,15 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 import type { Role } from "@/lib/generated/prisma/client";
+import { CredentialsSignin } from "next-auth";
+
+class UserNotFoundError extends CredentialsSignin {
+  code = "user_not_found";
+}
+
+class WrongPasswordError extends CredentialsSignin {
+  code = "wrong_password";
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -31,7 +40,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!user) {
-          return null;
+          throw new UserNotFoundError();
         }
 
         const isPasswordCorrect = await bcrypt.compare(
@@ -40,7 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         );
 
         if (!isPasswordCorrect) {
-          return null;
+          throw new WrongPasswordError();
         }
 
         return {
@@ -75,7 +84,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/auth/login",
   },
 
   secret: process.env.AUTH_SECRET,
