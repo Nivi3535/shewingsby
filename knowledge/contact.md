@@ -5,7 +5,7 @@ ShewingBy (Shewings by Sejal) is an online store for Indian ethnic wear. It sell
 
 ## How do I contact ShewingBy support?
 You can contact ShewingBy support by:
-- Email: [FILL IN: support email address]
+- Email: [FILL IN: learning_dontexist@gmail.com]
 - Phone / WhatsApp: [FILL IN: number]
 - Instagram: [FILL IN: handle, or remove this line]
 
