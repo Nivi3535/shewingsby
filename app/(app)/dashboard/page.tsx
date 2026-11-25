@@ -10,12 +10,12 @@
 //on the productdetails page after some point show similar product in the grid
 import React from "react";
 //import { InfiniteList } from "@/components/Dashboard/InfiniteList"; "@/components/Dashboard/Dashboard";
-import { InfiniteList } from "@/components/Dashboard/InfiniteList";
+import Dashboard from "@/components/Dashboard/Dashboard";
 
 export default function page() {
   return (
     <div>
-      <InfiniteList></InfiniteList>
+      <Dashboard></Dashboard>
     </div>
   );
 }
