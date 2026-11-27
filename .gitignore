@@ -43,3 +43,6 @@ next-env.d.ts
 /lib/generated/prisma
 
 /lib/generated/prisma
+
+# files uploaded through the admin panel (user data, not code)
+/public/uploads/
