@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import ProductSection from "@/components/Product/ProductSection";
 import ProductFilter from "@/components/Product/ProductFilter";
+import FilterProvider from "@/components/Product/Filter/FilterContext";
 import prisma from "@/lib/prisma";
 import Product from "@/types/Product";
 
@@ -54,19 +55,22 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </p>
       </div>
 
-      <div className="flex gap-8">
-        <aside className="w-72 shrink-0">
-          <ProductFilter />
-        </aside>
+      {/* filter state is scoped to this page, not the root layout */}
+      <FilterProvider>
+        <div className="flex gap-8">
+          <aside className="w-72 shrink-0">
+            <ProductFilter />
+          </aside>
 
-        <section className="flex-1">
-          <ProductSection
-            categoryName={`Search: ${query}`}
-            products={products}
-            count={count}
-          />
-        </section>
-      </div>
+          <section className="flex-1">
+            <ProductSection
+              categoryName={`Search: ${query}`}
+              products={products}
+              count={count}
+            />
+          </section>
+        </div>
+      </FilterProvider>
     </main>
   );
 }

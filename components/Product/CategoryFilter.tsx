@@ -14,7 +14,7 @@ type Categorymap = {
 
 function buildTree(
   categories: Category[],
-  parentId: number | null = null,
+  parentId: string | null = null,
 ): Category[] {
   return categories
     .filter((category) => category.parentId === parentId)
@@ -59,7 +59,7 @@ export default function CategoryFilter() {
           <span>{category.name}</span>{" "}
         </label>
       ))}
-    {/*   {categories.map((category) => (
+      {/*   {categories.map((category) => (
         <label key={category.id} className="flex items-center gap-2">
           <input
             key={category.id}

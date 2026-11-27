@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useRef } from "react";
 import { useCategoryStore } from "@/stores/categoryStore";
 import { useProductStore } from "@/stores/productStore";
 import { postProduct } from "@/lib/Helper/product";
 import SubmitButton from "@/components/common/SubmitButton";
+import { createSlug } from "@/lib/slug";
 
 //interface type for the form
 type FormValues = {
@@ -41,9 +42,13 @@ const inputClass =
 export default function AddProductForm() {
   const { categories, loadCategory } = useCategoryStore();
   const { loadProduct } = useProductStore();
+  const [error, setError] = useState("");
 
   //i have state for image so controlled input onChange can be done by REAct
   const [images, setImages] = useState<File[]>([]);
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const ALLOWED_TYPES = new Set(["image/jpeg", "image/png"]);
+  const slugRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadCategory();
@@ -90,16 +95,31 @@ export default function AddProductForm() {
 
   const [state, runAction] = useActionState(addProductAction, initialState);
 
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
-    setImages((prev) => [...prev, ...files]);
-    e.target.value = ""; //lets the user pick the same file again
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+
+    setError("");
+    if (!file) return;
+
+    if (!ALLOWED_TYPES.has(file.type)) {
+      setError("Choose a JPG or PNG image.");
+      input.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError("The image must be 5 MB or smaller.");
+      input.value = "";
+    }
+    setImages((prev) => [...prev, file]);
   }
 
   function handleRemove(index: number) {
     setImages((prev) => prev.filter((_, i) => i !== index));
   }
 
+  const categoryById = new Map(categories.map((c) => [c.id, c]));
   return (
     <form
       action={runAction}
@@ -114,13 +134,20 @@ export default function AddProductForm() {
           defaultValue={state.values.name}
           placeholder="Enter product name"
           className={inputClass}
+          onChange={(e) => {
+            if (slugRef.current) {
+              slugRef.current.value = createSlug(e.target.value); // write straight into the slug box
+            }
+          }}
         />
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium">Slug</label>
         <input
+          ref={slugRef}
           name="slug"
+          readOnly
           defaultValue={state.values.slug}
           placeholder="Enter slug"
           className={inputClass}
@@ -168,14 +195,39 @@ export default function AddProductForm() {
           className={inputClass}
         >
           <option value="">Select Category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
+          {categories.map((category) => {
+            const parent = category.parentId
+              ? categoryById.get(category.parentId)
+              : undefined;
+
+            return (
+              <option key={category.id} value={category.id}>
+                {parent ? `${parent.name} - ${category.name}` : category.name}
+              </option>
+            );
+          })}
         </select>
       </div>
 
+      <div>
+        <label htmlFor="product-image">
+          Product image (JPG or PNG, max 5 MB)
+        </label>
+        <input
+          id="product-image"
+          name="image"
+          type="file"
+          accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+          onChange={handleImageChange}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? "product-image-error" : undefined}
+        />
+        {error && (
+          <p id="product-image-error" role="alert">
+            {error}
+          </p>
+        )}
+      </div>
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium">Product Images</label>
 
@@ -191,7 +243,7 @@ export default function AddProductForm() {
           id="images"
           type="file"
           multiple
-          accept="image/*"
+          accept=".jpg,.jpeg,.png,image/jpeg,image/png"
           onChange={handleImageChange}
           className="hidden"
         />

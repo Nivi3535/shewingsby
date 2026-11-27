@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useProductStore } from "@/stores/productStore";
 import ProductFilter from "@/components/Product/ProductFilter";
 import ProductGrid from "../Product/ProductGrid";
+import FilterProvider from "@/components/Product/Filter/FilterContext";
 
 //for my practise purpose i have this dashboard design want to try different design/ways /styling  but I have the same kinda implementation in
 //the product
@@ -63,12 +64,15 @@ export default function Dashboard() {
     // </main>
     <main className="mx-auto max-w-7xl px-6 py-8">
       <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>
-      <section className="flex gap-8">
-        <ProductFilter />
-        <div className="flex-1">
-          <ProductGrid products={products} />
-        </div>
-      </section>
+      {/* filter state for this page: the sidebar and the grid both read it */}
+      <FilterProvider>
+        <section className="flex gap-8">
+          <ProductFilter />
+          <div className="flex-1">
+            <ProductGrid products={products} />
+          </div>
+        </section>
+      </FilterProvider>
     </main>
   );
 }

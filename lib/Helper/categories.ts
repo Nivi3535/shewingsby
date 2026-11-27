@@ -1,7 +1,7 @@
-import Category from "@/types/categories";
+import { Category } from "@/types/categories";
 
 export async function getCategory(): Promise<Category[]> {
-  const response = await fetch("/api/category");
+  const response = await fetch("/api/category", { cache: "no-store" });
 
   if (!response.ok) {
     console.log(response.status);
@@ -20,17 +20,19 @@ export async function saveCategory(formData: FormData): Promise<Category> {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to save category");
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.message ?? "Failed to save category");
   }
 
   return response.json();
 }
 
-export async function deleteCategory(id: number): Promise<void> {
-  const response = await fetch(`/api/category/${id}`, {
+export async function deleteCategory(id: string): Promise<void> {
+  const response = await fetch(`/api/category`, {
     method: "DELETE",
+    body: JSON.stringify({ id }),
   });
   if (!response.ok) {
-    throw new Error("Failed to save category");
+    throw new Error("Failed to delete category");
   }
 }

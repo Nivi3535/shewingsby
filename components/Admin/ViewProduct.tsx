@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { useProductStore } from "@/stores/productStore";
 import Product from "@/types/Product";
-import AddProductForm from "./AddProductForm";
 
-export default function AddProduct() {
+export default function ViewProduct() {
   const { product, loadProduct, deleteProduct } = useProductStore();
 
   const [productList, setProductList] = useState<Product[]>([]);
@@ -31,9 +30,6 @@ export default function AddProduct() {
   return (
     <div className="min-h-screen bg-gray-50 py-10">
       <div className="max-w-md mx-auto space-y-6">
-        {/* ---------------- Form ---------------- */}
-        <AddProductForm />
-
         {/* ---------------- Product List ---------------- */}
         <div className="space-y-3">
           <h2 className="font-bold">Products</h2>
@@ -50,14 +46,17 @@ export default function AddProduct() {
                 className="bg-white border rounded-lg p-4 space-y-2"
               >
                 <div className="flex flex-wrap gap-2">
-                  {item.image?.map((img, index) => (
-                    <img
-                      key={index}
-                      src={img.image}
-                      alt={item.name}
-                      className="w-24 h-24 rounded-md object-cover"
-                    />
-                  ))}
+                  {item.image?.map(
+                    (img, index) =>
+                      img.image && (
+                        <img
+                          key={index}
+                          src={img.image}
+                          alt={item.name}
+                          className="w-24 h-24 rounded-md object-cover"
+                        />
+                      ),
+                  )}
                 </div>
                 <button
                   onClick={() => {

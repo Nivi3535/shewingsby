@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Category from "@/components/Admin/AddCategory";
-import Product from "@/components/Admin/AddProduct";
+import Product from "@/components/Admin/AddProductForm";
 import { Session } from "next-auth";
 
 interface Props {

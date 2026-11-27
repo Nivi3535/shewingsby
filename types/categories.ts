@@ -1,10 +1,10 @@
 export interface Category {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   description?: string | null;
   image?: string | null;
-  parentId?: number | null;
+  parentId?: string | null;
   children?: Category[];
   createdAt: string;
   updatedAt: string;
@@ -14,6 +14,5 @@ export interface CategoryFormInput {
   name: string;
   slug: string;
   description: string;
-  image: string;
-  parentId: number | null;
+  parentId?: string | null;
 }

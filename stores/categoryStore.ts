@@ -12,8 +12,8 @@ interface CategoryStore {
   error: string | null;
 
   loadCategory: () => Promise<void>;
-  saveCategory: (formData: FormData) => Promise<void>;
-  deleteCategory: (id: number) => Promise<void>;
+  saveCategory: (formData: FormData) => Promise<boolean>;
+  deleteCategory: (id: string) => Promise<void>;
 }
 
 export const useCategoryStore = create<CategoryStore>((set) => ({
@@ -54,27 +54,30 @@ export const useCategoryStore = create<CategoryStore>((set) => ({
       await saveCategory(formData);
 
       const categories = await getCategory();
-
-      set({
-        categories,
-        loading: false,
-      });
+      set({ categories, loading: false });
+      return true;
+      return true;
     } catch (error) {
       console.error(error);
-
       set({
         loading: false,
-        error: "Failed to save category",
+        error:
+          error instanceof Error ? error.message : "Failed to save category",
       });
+      return false;
     }
   },
-  deleteCategory: async (id: number) => {
+
+  deleteCategory: async (id: string) => {
     try {
       set({
         loading: true,
         error: null,
       });
       await deleteCategory(id);
+      set((state) => ({
+        categories: state.categories.filter((c) => c.id !== id),
+      }));
     } catch (error) {
       console.log(error);
       set({
